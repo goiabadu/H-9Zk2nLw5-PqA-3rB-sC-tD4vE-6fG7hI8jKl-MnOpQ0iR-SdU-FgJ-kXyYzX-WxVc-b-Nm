@@ -6,24 +6,9 @@ local COREFUNCTIONS_CL = Tunnel.getInterface("CoreFunctions_CL")
 WALLSYSTEM = {}
 Tunnel.bindInterface("Wallsystem", WALLSYSTEM)
 
-prepare("anticheat/banauto", "UPDATE anticheat SET banned = 1 WHERE license = @license AND token = @token")
-prepare("anticheat/insertlog","INSERT INTO anticheat_logs (nome, token, data, hora, motivo) VALUES (@nome, @token, @data, @hora, @motivo)")
-prepare("anticheat/novotoken","INSERT INTO anticheat (user_id, license, token, steam, discord, live) VALUES (@user_id, @license, @token, @steam, @discord, @live)")
-prepare("anticheat/infotoken", "SELECT token FROM anticheat WHERE license = @license")
-prepare("anticheat/infoplayer", "SELECT banned FROM anticheat WHERE license = @license AND banned = 1")
-prepare("anticheat/banir", "UPDATE anticheat SET banned = @banned WHERE user_id = @user_id")
-prepare("anticheat/GetInfos", "SELECT * FROM anticheat WHERE user_id = @user_id")
-prepare("GetAcId", "SELECT * FROM anticheat WHERE user_id = @user_id")
-prepare("GetAllLogs", "SELECT * FROM anticheat_logs")
-prepare("GetAllusers", "SELECT * FROM anticheat")
-prepare("getuerId", "SELECT * FROM anticheat WHERE token = @token")
-prepare("unbanplayer", "UPDATE anticheat SET banned = 0 WHERE user_id = @user_id")
-prepare("anticheat/insertData",[[INSERT INTO `anticheat` (`user_id`, `license`, `token`, `banned`) VALUES (?, ?, ?, 0);]])
-
 function bye(source, reason)
     DropPlayer(source,reason)
 end
-
 
 local wall_infos = {}
 function WALLSYSTEM.setWallInfos()
