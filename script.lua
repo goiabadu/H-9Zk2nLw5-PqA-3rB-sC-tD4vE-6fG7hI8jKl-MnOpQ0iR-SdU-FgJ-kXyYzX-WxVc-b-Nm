@@ -10,6 +10,34 @@ function bye(source, reason)
     DropPlayer(source,reason)
 end
 
+function SendWebhookMessage(webhook, message, footer)
+    PerformHttpRequest(webhook, 
+        function(statusCode, response, headers)
+        end, 
+        "POST", 
+        json.encode({
+            username = "MQTHAC FIVEM",
+            avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?",
+            embeds = {
+                {
+                    color = 16758345,
+                    author = {
+                        name = 'MQTHAC FIVEM',
+                        icon_url = 'https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?'
+                    },
+                    description = message,
+                    footer = {
+                        text = footer
+                    }
+                }
+            }
+        }), 
+        {
+            ["Content-Type"] = "application/json"
+        }
+    )
+end
+
 local wall_infos = {}
 function WALLSYSTEM.setWallInfos()
     local source = source
@@ -653,39 +681,6 @@ end
 
 function COREFUNCTIONS.GetBlackListPropsState()
     return blacklistProps
-end
-
-function SendWebhookMessage(webhook, message, footer)
-    if webhook ~= nil and webhook ~= "" then
-        local payload = {
-            content = message
-        }
-
-        if footer ~= nil then
-            payload.embeds = {
-                {
-                    color = 16758345,
-                    author = {
-                        name = 'MQTHAC FIVEM',
-                        icon_url = 'https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?'
-                    },
-                    description = message,
-                    footer = {
-                        text = footer
-                    }
-                }
-            }
-        end
-
-        PerformHttpRequest(
-            webhook,
-            function(err, text, headers)
-            end,
-            "POST",
-            json.encode(payload),
-            {["Content-Type"] = "application/json"}
-        )
-    end
 end
 
 function isImune(token)
