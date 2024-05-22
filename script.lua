@@ -10,34 +10,6 @@ function bye(source, reason)
     DropPlayer(source,reason)
 end
 
-function SendWebhookMessage(webhook, message, footer)
-    PerformHttpRequest(webhook, 
-        function(statusCode, response, headers)
-        end, 
-        "POST", 
-        json.encode({
-            username = "MQTHAC FIVEM",
-            avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?",
-            embeds = {
-                {
-                    color = 16758345,
-                    author = {
-                        name = 'MQTHAC FIVEM',
-                        icon_url = 'https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?'
-                    },
-                    description = message,
-                    footer = {
-                        text = footer
-                    }
-                }
-            }
-        }), 
-        {
-            ["Content-Type"] = "application/json"
-        }
-    )
-end
-
 local wall_infos = {}
 function WALLSYSTEM.setWallInfos()
     local source = source
@@ -220,6 +192,38 @@ function WALLSYSTEM.UnbanPlayer(acid)
     end
 end
 
+function SendWebhookMessage(webhook, message, footer)
+    PerformHttpRequest(webhook, 
+        function(statusCode, response, headers)
+            -- Verificar se há erros na resposta
+            if statusCode ~= 200 then
+                print("Erro ao enviar webhook: " .. statusCode)
+            end
+        end, 
+        "POST", 
+        json.encode({
+            username = "MQTHAC FIVEM",
+            avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?",
+            embeds = {
+                {
+                    color = 16758345,
+                    author = {
+                        name = 'MQTHAC FIVEM',
+                        icon_url = 'https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?'
+                    },
+                    description = message,
+                    footer = {
+                        text = footer
+                    }
+                }
+            }
+        }), 
+        {
+            ["Content-Type"] = "application/json"
+        }
+    )
+end
+
 function WALLSYSTEM.BanPlayer(srcrb, motivo)
     local source = source
     local Passport = getUserId(source)
@@ -237,13 +241,7 @@ function WALLSYSTEM.BanPlayer(srcrb, motivo)
                 return
             end
             if not isImune(token) then
-                SendWebhookMessage(
-                    banimentos,
-                    "```ini\n[ID]: " ..
-                        user_id ..
-                            " [BANIDO PELO PAINEL]\n[TOKEN]: " ..
-                                token .. os.date("\n[Data]: %d/%m/%Y [Hora]: %H:%M:%S") .. " \r```"
-                )
+                SendWebhookMessage(banimentos,"```ini\n[ID]: " .. user_id .." [BANIDO PELO PAINEL]\n[TOKEN]: " .. token .. os.date("\n[Data]: %d/%m/%Y [Hora]: %H:%M:%S") .. " \r```")
                 if token then
                     print("^2" .. token .. "  " .. "^1banido pelo painel")
 
