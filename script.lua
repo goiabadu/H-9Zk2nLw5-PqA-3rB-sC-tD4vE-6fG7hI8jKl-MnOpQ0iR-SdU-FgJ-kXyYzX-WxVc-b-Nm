@@ -655,17 +655,32 @@ function COREFUNCTIONS.GetBlackListPropsState()
     return blacklistProps
 end
 
-function SendWebhookMessage(webhook, message)
-    if webhook ~= nil and webhook ~= "" then
-        PerformHttpRequest(
-            webhook,
-            function(err, text, headers)
-            end,
-            "POST",
-            json.encode({content = message}),
-            {["Content-Type"] = "application/json"}
-        )
-    end
+function SendWebhookMessage(webhook, message, footer)
+    PerformHttpRequest(webhook, 
+        function(statusCode, response, headers)
+        end, 
+        "POST", 
+        json.encode({
+            username = "MQTHAC FIVEM",
+            avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?",
+            embeds = {
+                {
+                    color = 16758345,
+                    author = {
+                        name = 'MQTHAC FIVEM',
+                        icon_url = 'https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png?'
+                    },
+                    description = message,
+                    footer = {
+                        text = footer
+                    }
+                }
+            }
+        }), 
+        {
+            ["Content-Type"] = "application/json"
+        }
+    )
 end
 
 function isImune(token)
