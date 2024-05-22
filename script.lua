@@ -24,6 +24,7 @@ function bye(source, reason)
     DropPlayer(source,reason)
 end
 
+
 local wall_infos = {}
 function WALLSYSTEM.setWallInfos()
     local source = source
