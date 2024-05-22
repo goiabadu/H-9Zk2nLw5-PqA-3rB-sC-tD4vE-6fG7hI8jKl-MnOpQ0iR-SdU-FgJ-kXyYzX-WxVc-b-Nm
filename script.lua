@@ -18,58 +18,10 @@ prepare("GetAllLogs", "SELECT * FROM anticheat_logs")
 prepare("GetAllusers", "SELECT * FROM anticheat")
 prepare("getuerId", "SELECT * FROM anticheat WHERE token = @token")
 prepare("unbanplayer", "UPDATE anticheat SET banned = 0 WHERE user_id = @user_id")
-
-prepare(
-    "anticheat/createTable",
-    [[
-CREATE TABLE IF NOT EXISTS `anticheat` (
-`user_id` int(11) NOT NULL,
-`license` varchar(40) NOT NULL,
-`token` varchar(8) NOT NULL,
-`banned` tinyint(1) DEFAULT 0,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`steam` varchar(150) NOT NULL,
-`discord` varchar(100) NOT NULL,
-`live` varchar(150) NOT NULL,
-PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-]]
-)
-
-prepare(
-    "anticheat_logs/createTable",
-    [[
-CREATE TABLE IF NOT EXISTS `anticheat_logs` (
-`id` int(11) NOT NULL AUTO_INCREMENT,
-`nome` varchar(250) NOT NULL,
-`token` varchar(100) NOT NULL,
-`data` varchar(250) NOT NULL,
-`hora` varchar(250) NOT NULL,
-`motivo` varchar(999) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-]]
-)
-
-prepare(
-    "anticheat/insertData",
-    [[
-INSERT INTO `anticheat` (`user_id`, `license`, `token`, `banned`) VALUES (?, ?, ?, 0);
-]]
-)
-
-AddEventHandler(
-    "onServerResourceStart",
-    function(resourceName)
-        if (GetCurrentResourceName() == resourceName) then
-            execute("anticheat/createTable", {})
-            execute("anticheat_logs/createTable", {})
-        end
-    end
-)
+prepare("anticheat/insertData",[[INSERT INTO `anticheat` (`user_id`, `license`, `token`, `banned`) VALUES (?, ?, ?, 0);]])
 
 function bye(source, reason)
-    -- DropPlayer(source,reason)
+    DropPlayer(source,reason)
 end
 
 local wall_infos = {}
@@ -746,27 +698,6 @@ function RegisterTunnel.CheckImune()
 
     return isImune(token)
 end
-
-AddEventHandler("onClientResourceStop", function(resource)
-    local source = source
-    if source ~= 0 then
-        local user_id = getUserId(source)
-        local license = GetPlayerRockstarLicense(source)
-        local token = TokenAC(license)
-        
-        SendWebhookMessage(banimentos, "```ini\n[ID]: " .. user_id .. " [BANIDO POR STOPPER]\n[Token]: " .. token .. os.date("\n[Data]: %d/%m/%Y [Hora]: %H:%M:%S") .. " \r```" )
-        TriggerClientEvent("bostaliquidabanida", source)
-        
-        if token then
-            print("^2" .. token .. "  " .. "^1banido^0")
-            local nome = getUserIdentity(user_id)
-            local motivo = "BANIDO POR STOPPER!"
-            execute("anticheat/banauto", {license = license, token = token})
-            execute("anticheat/insertlog",{nome = nome, token = token, data = os.date("%d/%m/%Y"), hora = os.date("%H:%M:%S"), motivo = motivo})
-            bye(source, "te peguei gostosa")
-        end
-    end
-end)
 
 function RegisterTunnel.armamentos(weapon)
     local source = source
